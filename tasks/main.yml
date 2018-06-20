@@ -1,0 +1,19 @@
+---
+# tasks file for nginx
+- name: nginx | add nginx repo
+  template:
+    src: repo.j2
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: 0644
+- name: Install nginx
+  yum: name=nginx state=present
+  become: true 
+- name: Make sure a service is running
+  systemd: state=started name=nginx
+- name: Nginx config
+  template:
+    src=nginx.conf.j2
+    dest=/etc/nginx/nginx.conf
+  notify: restart nginx
